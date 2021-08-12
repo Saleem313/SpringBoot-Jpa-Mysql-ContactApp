@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.ss.contact.entity.ContactEntity;
@@ -28,6 +31,7 @@ public class ContactServiceImpl implements ContactService {
 	}
 
 	@Override
+	@Cacheable(value = "contact",key = "#contactId")
 	public Object getContact(int contactId) {
 		Optional<ContactEntity> findById = contRepo.findById(contactId);
 		if(findById!=null)
@@ -37,6 +41,7 @@ public class ContactServiceImpl implements ContactService {
 	}
 
 	@Override
+	@Cacheable(value = "contact")
 	public List<ContactEntity> getAllContacts() {
 		List<ContactEntity> contactList = new ArrayList<ContactEntity>();
 		Iterable<ContactEntity> allContacts = contRepo.findAll();
@@ -51,6 +56,7 @@ public class ContactServiceImpl implements ContactService {
 	}
 
 	@Override
+	@CacheEvict(value = "contact", key = "#contactId")
 	public boolean deleteContact(int contactId) {
 		 boolean isExist = contRepo.existsById(contactId);
 		if(isExist) {
@@ -62,6 +68,7 @@ public class ContactServiceImpl implements ContactService {
 	}
 	
 	@Override
+	@CachePut(value = "contact", key = "#contactId")
 	 public boolean updateContact(int contactId,ContactEntity contact) {
 		Optional<ContactEntity> contact1 = contRepo.findById(contactId);
 		if(contact1.isPresent() ) {
